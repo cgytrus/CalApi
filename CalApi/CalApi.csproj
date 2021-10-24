@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{ADB9BF51-6A82-4E95-B439-6ADD61CD527C}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>CalApi</RootNamespace>
+        <AssemblyName>CalApi</AssemblyName>
+        <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+        <FileAlignment>512</FileAlignment>
+        <LangVersion>9</LangVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Release\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <ItemGroup>
+      <Compile Include="src\API\Cat\CatControlsExtensions.cs" />
+      <Compile Include="src\API\Cat\CatPartManagerExtensions.cs" />
+      <Compile Include="src\API\PolyMap\ItemManager.cs" />
+      <Compile Include="src\API\UI.cs" />
+      <Compile Include="src\API\Util.cs" />
+      <Compile Include="src\Core\CalApiPlugin.cs" />
+      <Compile Include="src\Core\LightBulb.cs" />
+      <Compile Include="src\Patches\CatControlsJumpWhenLiquidPatch.cs" />
+      <Compile Include="src\Patches\IPatch.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <Content Include="libs\0Harmony.dll" />
+      <Content Include="libs\Assembly-CSharp.dll" />
+      <Content Include="libs\BepInEx.dll" />
+      <Content Include="libs\MMHOOK_Assembly-CSharp.dll" />
+      <Content Include="libs\Mono.Cecil.dll" />
+      <Content Include="libs\MonoMod.Utils.dll" />
+      <Content Include="libs\mscorlib.dll" />
+      <Content Include="libs\Rewired_Core.dll" />
+      <Content Include="libs\System.Core.dll" />
+      <Content Include="libs\System.dll" />
+      <Content Include="libs\UnityEngine.CoreModule.dll" />
+      <Content Include="libs\UnityEngine.dll" />
+      <Content Include="libs\UnityEngine.Physics2DModule.dll" />
+      <Content Include="libs\UnityEngine.TextRenderingModule.dll" />
+      <Content Include="libs\UnityEngine.UI.dll" />
+    </ItemGroup>
+    <ItemGroup>
+      <Reference Include="0Harmony, Version=2.5.5.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>libs\0Harmony.dll</HintPath>
+        <Private>False</Private>
+      </Reference>
+      <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>libs\Assembly-CSharp.dll</HintPath>
+        <Private>False</Private>
+      </Reference>
+      <Reference Include="BepInEx, Version=5.4.17.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>libs\BepInEx.dll</HintPath>
+        <Private>False</Private>
+      </Reference>
+      <Reference Include="MMHOOK_Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>libs\MMHOOK_Assembly-CSharp.dll</HintPath>
+        <Private>False</Private>
+      </Reference>
+      <Reference Include="Mono.Cecil, Version=0.10.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e">
+        <HintPath>libs\Mono.Cecil.dll</HintPath>
+        <Private>False</Private>
+      </Reference>
+      <Reference Include="MonoMod.Utils, Version=21.9.19.1, Culture=neutral, PublicKeyToken=null">
+        <HintPath>libs\MonoMod.Utils.dll</HintPath>
+        <Private>False</Private>
+      </Reference>
+      <Reference Include="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+        <HintPath>libs\mscorlib.dll</HintPath>
+        <Private>False</Private>
+      </Reference>
+      <Reference Include="Rewired_Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>libs\Rewired_Core.dll</HintPath>
+        <Private>False</Private>
+      </Reference>
+      <Reference Include="System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+        <HintPath>libs\System.dll</HintPath>
+        <Private>False</Private>
+      </Reference>
+      <Reference Include="System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+        <HintPath>libs\System.Core.dll</HintPath>
+        <Private>False</Private>
+      </Reference>
+      <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>libs\UnityEngine.dll</HintPath>
+        <Private>False</Private>
+      </Reference>
+      <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>libs\UnityEngine.CoreModule.dll</HintPath>
+        <Private>False</Private>
+      </Reference>
+      <Reference Include="UnityEngine.Physics2DModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>libs\UnityEngine.Physics2DModule.dll</HintPath>
+        <Private>False</Private>
+      </Reference>
+      <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>libs\UnityEngine.TextRenderingModule.dll</HintPath>
+        <Private>False</Private>
+      </Reference>
+      <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>libs\UnityEngine.UI.dll</HintPath>
+        <Private>False</Private>
+      </Reference>
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+         Other similar extension points exist, see Microsoft.Common.targets.
+    <Target Name="BeforeBuild">
+    </Target>
+    <Target Name="AfterBuild">
+    </Target>
+    -->
+</Project>
