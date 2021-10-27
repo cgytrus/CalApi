@@ -15,7 +15,7 @@ using ProphecySystem;
 using UnityEngine;
 
 namespace CalApi.Core {
-    [BepInPlugin("mod.cgytrus.plugins.calapi", "Cats are Liquid API", "0.2.0")]
+    [BepInPlugin("mod.cgytrus.plugins.calapi", "Cats are Liquid API", "0.2.1")]
     //[BepInProcess("CaL-ABP-Windows.exe")]
     public class CalApiPlugin : BaseUnityPlugin {
         private Vector2 _velocity = Vector2.zero;
