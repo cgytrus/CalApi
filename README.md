@@ -2,7 +2,7 @@
 Some small useful APIs for modding [Cats are Liquid - A Better Place](https://store.steampowered.com/app/1188080)
 
 ## Installation
-1. Install [BepInEx](https://bepinex.github.io/bepinex_docs/master/articles/user_guide/installation) (x64)
+1. Install [BepInEx](https://docs.bepinex.dev/articles/user_guide/installation) (x64)
 2. Install [Configuration Manager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases/latest)
    by drag-and-dropping the folder from the downloaded archive into the game's folder
 3. Install [Bepinex.Monomod.HookGenPatcher](https://github.com/harbingerofme/Bepinex.Monomod.HookGenPatcher) as described in its README
