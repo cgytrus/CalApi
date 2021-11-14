@@ -8,7 +8,7 @@ using UnityEngine.UI;
 using Object = UnityEngine.Object;
 using CalDataEditor = DataEditor;
 
-namespace CalApi.API; 
+namespace CalApi.API;
 
 public static class UI {
     public static event EventHandler? initialized;

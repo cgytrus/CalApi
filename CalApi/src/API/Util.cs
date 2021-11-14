@@ -10,7 +10,7 @@ using UnityEngine;
 
 using Object = UnityEngine.Object;
 
-namespace CalApi.API; 
+namespace CalApi.API;
 
 public static class Util {
     internal static ManualLogSource? logger { get; set; }
