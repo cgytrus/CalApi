@@ -17,3 +17,6 @@ Some small useful APIs for modding [Cats are Liquid - A Better Place](https://st
 2. Put the missing DLLs into CalApi/libs (for a more detailed explanation,
    follow the [Plugin development](https://bepinex.github.io/bepinex_docs/master/articles/dev_guide/plugin_tutorial/1_setup.html)
    guide on the BepInEx wiki starting from Gathering DLL dependencies)
+
+**This repo is using [popcron/gizmos](https://github.com/popcron/gizmos),
+which is licensed under [MIT](https://github.com/popcron/gizmos/blob/master/LICENSE)**
