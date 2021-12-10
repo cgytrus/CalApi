@@ -129,11 +129,9 @@ public class CalApiPlugin : BaseUnityPlugin {
         _debugJumpForce.SettingChanged += (_, _) => UpdateDebugMovement();
         _debugClimbForce.SettingChanged += (_, _) => UpdateDebugMovement();
 
-        _debugMode.SettingChanged += (_, _) => UpdateDebugInvulnerability();
         _debugInvulnerability.SettingChanged += (_, _) => UpdateDebugInvulnerability();
         _debugFullInvulnerability.SettingChanged += (_, _) => UpdateDebugInvulnerability();
 
-        _debugMode.SettingChanged += (_, _) => UpdateDebugLavaWalk();
         _debugLavaWalk.SettingChanged += (_, _) => UpdateDebugLavaWalk();
         UpdateDebugLavaWalk();
 
@@ -143,8 +141,10 @@ public class CalApiPlugin : BaseUnityPlugin {
         On.Cat.CatControls.Awake += (orig, self) => {
             orig(self);
 
-            _playerCats.Clear();
-            if(self.GetComponent<Cat.PlayerActor>()) _playerCats.Add(self.gameObject);
+            if(self.GetComponent<Cat.PlayerActor>()) {
+                _playerCats.Clear();
+                _playerCats.Add(self.gameObject);
+            }
 
             UpdateDebugMovement();
             UpdateDebugInvulnerability();
@@ -213,7 +213,7 @@ public class CalApiPlugin : BaseUnityPlugin {
             object normalState = normalStateConfiguration.GetValue(controls);
             object liquidState = liquidStateConfiguration.GetValue(controls);
 
-            if(_debugMovement.Value) {
+            if(_debugMode.Value && _debugMovement.Value) {
                 stateConfigurationSpeed.SetValue(normalState, _debugNormalMoveSpeed.BoxedValue);
                 stateConfigurationSpeed.SetValue(liquidState, _debugLiquidMoveSpeed.BoxedValue);
                 jumpForce.SetValue(controls, _debugJumpForce.BoxedValue);
