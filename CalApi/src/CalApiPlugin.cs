@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 using BepInEx;
@@ -226,6 +226,7 @@ public class CalApiPlugin : BaseUnityPlugin {
     private static readonly FieldInfo catHealth = AccessTools.Field(typeof(Cat.CatControls), "catHealth");
     private static readonly FieldInfo invulnerable = AccessTools.Field(catHealth.FieldType, "invulnerable");
     private static readonly FieldInfo dying = AccessTools.Field(catHealth.FieldType, "dying");
+    [SuppressMessage("ReSharper", "HeapView.BoxingAllocation")]
     private void UpdateDebugInvulnerability() {
         // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
         foreach(GameObject cat in _playerCats) {
