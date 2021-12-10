@@ -15,6 +15,8 @@ using HarmonyLib;
 
 using ProphecySystem;
 
+using Tayx.Graphy;
+
 using UnityEngine;
 
 namespace CalApi;
@@ -43,6 +45,7 @@ public class CalApiPlugin : BaseUnityPlugin {
     private readonly ConfigEntry<bool> _debugLavaWalk;
     private readonly ConfigEntry<bool> _debugAlwaysControlled;
     private readonly ConfigEntry<bool> _debugLiquidJump;
+    private readonly ConfigEntry<bool> _debugGraphy;
 
     private readonly HashSet<GameObject> _playerCats = new();
 
@@ -74,6 +77,7 @@ public class CalApiPlugin : BaseUnityPlugin {
         _debugLavaWalk = Config.Bind("Debug: Other", "Jesus Mode", false, "Walk on lava Pog");
         _debugAlwaysControlled = Config.Bind("Debug: Other", "Always Controlled", false, "");
         _debugLiquidJump = Config.Bind("Debug: Other", "Jump when liquid", false, "");
+        _debugGraphy = Config.Bind("Debug: Other", "Show Graphy", false, "");
     }
 
     private void Awake() {
@@ -115,6 +119,9 @@ public class CalApiPlugin : BaseUnityPlugin {
             UpdateDebugMovement();
             UpdateDebugInvulnerability();
             UpdateDebugLavaWalk();
+            UpdateDebugJumpWhenLiquid();
+            UpdateDebugCameraZoom();
+            UpdateDebugGraphy();
         };
         _debugMovement.SettingChanged += (_, _) => UpdateDebugMovement();
         _debugNormalMoveSpeed.SettingChanged += (_, _) => UpdateDebugMovement();
@@ -130,9 +137,8 @@ public class CalApiPlugin : BaseUnityPlugin {
         _debugLavaWalk.SettingChanged += (_, _) => UpdateDebugLavaWalk();
         UpdateDebugLavaWalk();
 
-        CatControlsJumpWhenLiquidPatch.settingEnabled = _debugLiquidJump.Value;
-        _debugLiquidJump.SettingChanged +=
-            (_, _) => CatControlsJumpWhenLiquidPatch.settingEnabled = _debugLiquidJump.Value;
+        _debugLiquidJump.SettingChanged += (_, _) => UpdateDebugJumpWhenLiquid();
+        UpdateDebugJumpWhenLiquid();
 
         On.Cat.CatControls.Awake += (orig, self) => {
             orig(self);
@@ -162,6 +168,9 @@ public class CalApiPlugin : BaseUnityPlugin {
         _debugCameraZoom.SettingChanged += (_, _) => UpdateDebugCameraZoom();
         _debugCameraZoomAmount.SettingChanged += (_, _) => UpdateDebugCameraZoom();
         UpdateDebugCameraZoom();
+
+        _debugGraphy.SettingChanged += (_, _) => UpdateDebugGraphy();
+        UI.initialized += (_, _) => UpdateDebugGraphy();
     }
 
     private void ProcessAlwaysControlled(Cat.CatControls controls) {
@@ -244,6 +253,9 @@ public class CalApiPlugin : BaseUnityPlugin {
         Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Floating Cat"), companion, ignore);
     }
 
+    private void UpdateDebugJumpWhenLiquid() =>
+        CatControlsJumpWhenLiquidPatch.settingEnabled = _debugMode.Value && _debugLiquidJump.Value;
+
     private static readonly FieldInfo followPlayerInfo = AccessTools.Field(typeof(FollowPlayer), "instance");
     private static float _defaultCameraZoom = float.NaN;
     private void UpdateDebugCameraZoom() {
@@ -265,6 +277,28 @@ public class CalApiPlugin : BaseUnityPlugin {
         slowMoVirtualCamera.m_Lens.OrthographicSize = zoom;
         // ReSharper disable once HeapView.BoxingAllocation
         cameraSize.SetValue(followPlayer, zoom);
+    }
+
+    private bool _graphyInitialized;
+    private GraphyManager? _graphyManager;
+    private void UpdateDebugGraphy() {
+        if(!_graphyManager) {
+            CanvasManager canvasManager =
+                (CanvasManager)AccessTools.Field(typeof(CanvasManager), "instance").GetValue(null);
+            GameObject graphy =
+                (GameObject)AccessTools.Field(typeof(CanvasManager), "graphy").GetValue(canvasManager);
+            _graphyManager = graphy.GetComponent<GraphyManager>();
+            graphy.transform.SetParent(null);
+        }
+
+        if(_debugMode.Value && _debugGraphy.Value) {
+            if(_graphyInitialized) _graphyManager!.Enable();
+            else {
+                _graphyManager!.gameObject.SetActive(true);
+                _graphyInitialized = true;
+            }
+        }
+        else if(_graphyInitialized) _graphyManager!.Disable();
     }
 
     private void Update() => CheckDebugCameraZoomFollowPlayer();
