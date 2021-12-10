@@ -42,8 +42,7 @@ public class CalApiPlugin : BaseUnityPlugin {
     private readonly ConfigEntry<bool> _debugFullInvulnerability;
     private readonly ConfigEntry<bool> _debugLavaWalk;
     private readonly ConfigEntry<bool> _debugAlwaysControlled;
-
-    private readonly ConfigEntry<bool> _funLiquidJump;
+    private readonly ConfigEntry<bool> _debugLiquidJump;
 
     private readonly HashSet<GameObject> _playerCats = new();
 
@@ -74,7 +73,7 @@ public class CalApiPlugin : BaseUnityPlugin {
         _debugFullInvulnerability = Config.Bind("Debug: Other", "Full Invulnerability", false, "");
         _debugLavaWalk = Config.Bind("Debug: Other", "Jesus Mode", false, "Walk on lava Pog");
         _debugAlwaysControlled = Config.Bind("Debug: Other", "Always Controlled", false, "");
-        _funLiquidJump = Config.Bind("Debug: Other", "Jump when liquid", false, "");
+        _debugLiquidJump = Config.Bind("Debug: Other", "Jump when liquid", false, "");
     }
 
     private void Awake() {
@@ -131,9 +130,9 @@ public class CalApiPlugin : BaseUnityPlugin {
         _debugLavaWalk.SettingChanged += (_, _) => UpdateDebugLavaWalk();
         UpdateDebugLavaWalk();
 
-        CatControlsJumpWhenLiquidPatch.settingEnabled = _funLiquidJump.Value;
-        _funLiquidJump.SettingChanged +=
-            (_, _) => CatControlsJumpWhenLiquidPatch.settingEnabled = _funLiquidJump.Value;
+        CatControlsJumpWhenLiquidPatch.settingEnabled = _debugLiquidJump.Value;
+        _debugLiquidJump.SettingChanged +=
+            (_, _) => CatControlsJumpWhenLiquidPatch.settingEnabled = _debugLiquidJump.Value;
 
         On.Cat.CatControls.Awake += (orig, self) => {
             orig(self);
