@@ -7,13 +7,13 @@ using Cat;
 
 using UnityEngine;
 
-namespace CalApi.Core;
+namespace CalApi;
 
 public class LightBulb : MonoBehaviour {
     /*private bool _triggered;
     private FadeEffect _effect;
     private FieldInfo _speed;
-    
+
     private void OnTriggerEnter2D(Collider2D other) {
         if(_triggered || !other.GetComponent<CatPart>() || Camera.main == null)
             return;

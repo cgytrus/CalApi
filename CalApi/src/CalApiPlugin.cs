@@ -14,7 +14,7 @@ using ProphecySystem;
 
 using UnityEngine;
 
-namespace CalApi.Core;
+namespace CalApi;
 
 [BepInPlugin("mod.cgytrus.plugins.calapi", "Cats are Liquid API", "0.2.2")]
 //[BepInProcess("CaL-ABP-Windows.exe")]
@@ -99,9 +99,9 @@ public class CalApiPlugin : BaseUnityPlugin {
 
         /*CatPartManager.catShown += (caller, _) => {
             Cat.CatPartManager partManager = (Cat.CatPartManager)caller;
-            
+
             if(!partManager.GetComponent<PlayerActor>()) return;
-            
+
             controls.ApplyColor(Color.black);
         };*/
 
