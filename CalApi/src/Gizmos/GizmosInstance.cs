@@ -1,4 +1,7 @@
 #nullable disable
+#pragma warning disable CS0067
+#pragma warning disable CS0219
+#pragma warning disable CS0105
 // ReSharper disable All
 
 using System;
@@ -15,8 +18,6 @@ using UnityEditor.SceneManagement;
 
 #if !UNITY_2019_1_OR_NEWER
 using System;
-#pragma warning disable CS0067
-#pragma warning disable CS0219
 
 public struct ScriptableRenderContext {}
 
