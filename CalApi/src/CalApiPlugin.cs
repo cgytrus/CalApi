@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 using BepInEx;
@@ -7,6 +8,8 @@ using BepInEx.Configuration;
 using CalApi.API;
 using CalApi.API.Cat;
 using CalApi.Patches;
+
+using Cinemachine;
 
 using HarmonyLib;
 
@@ -32,8 +35,8 @@ public class CalApiPlugin : BaseUnityPlugin {
     private readonly ConfigEntry<bool> _debugNoClip;
     private readonly ConfigEntry<float> _debugNoClipSpeed;
 
-    /*private ConfigEntry<bool> _debugCameraZoom;
-    private ConfigEntry<float> _debugCameraZoomAmount;*/
+    private readonly ConfigEntry<bool> _debugCameraZoom;
+    private readonly ConfigEntry<float> _debugCameraZoomAmount;
 
     private readonly ConfigEntry<bool> _debugInvulnerability;
     private readonly ConfigEntry<bool> _debugFullInvulnerability;
@@ -64,16 +67,14 @@ public class CalApiPlugin : BaseUnityPlugin {
         _debugNoClip = Config.Bind("Debug: No Clip", "No Clip", false, "");
         _debugNoClipSpeed = Config.Bind("Debug: No Clip", "No Clip Speed", 30f, "");
 
+        _debugCameraZoom = Config.Bind("Debug: Camera", "Camera Zoom", false, "");
+        _debugCameraZoomAmount = Config.Bind("Debug: Camera", "Camera Zoom Amount", 1f, "");
+
         _debugInvulnerability = Config.Bind("Debug: Other", "Invulnerability", false, "");
         _debugFullInvulnerability = Config.Bind("Debug: Other", "Full Invulnerability", false, "");
         _debugLavaWalk = Config.Bind("Debug: Other", "Jesus Mode", false, "Walk on lava Pog");
         _debugAlwaysControlled = Config.Bind("Debug: Other", "Always Controlled", false, "");
-
-        _funLiquidJump = Config.Bind("literally fun, nothing more (why did i even add this?)",
-            "Jump when liquid", false, "");
-
-        /*_debugCameraZoom = Config.Bind("Debug: Camera Zoom", "Camera Zoom", false, "");
-        _debugCameraZoomAmount = Config.Bind("Debug: Camera Zoom", "Camera Zoom Amount", 1f, "");*/
+        _funLiquidJump = Config.Bind("Debug: Other", "Jump when liquid", false, "");
     }
 
     private void Awake() {
@@ -158,6 +159,10 @@ public class CalApiPlugin : BaseUnityPlugin {
             if(!_debugMode.Value || !_debugNoClip.Value || !_playerCats.Contains(self.gameObject)) return;
             ProcessNoClipToggle(self);
         };
+
+        _debugCameraZoom.SettingChanged += (_, _) => UpdateDebugCameraZoom();
+        _debugCameraZoomAmount.SettingChanged += (_, _) => UpdateDebugCameraZoom();
+        UpdateDebugCameraZoom();
     }
 
     private void ProcessAlwaysControlled(Cat.CatControls controls) {
@@ -237,5 +242,39 @@ public class CalApiPlugin : BaseUnityPlugin {
         Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Cat"), companion, ignore);
         Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Liquid Cat"), companion, ignore);
         Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Floating Cat"), companion, ignore);
+    }
+
+    private static readonly FieldInfo followPlayerInfo = AccessTools.Field(typeof(FollowPlayer), "instance");
+    private static float _defaultCameraZoom = float.NaN;
+    private void UpdateDebugCameraZoom() {
+        FollowPlayer followPlayer = (FollowPlayer)followPlayerInfo.GetValue(null);
+        if(!followPlayer) return;
+        FieldInfo cameraSize = AccessTools.Field(typeof(FollowPlayer), "cameraSize");
+        if(float.IsNaN(_defaultCameraZoom)) _defaultCameraZoom = (float)cameraSize.GetValue(followPlayer);
+        float zoom = _defaultCameraZoom * (_debugMode.Value && _debugCameraZoom.Value ? _debugCameraZoomAmount.Value :
+            (float)_debugCameraZoomAmount.DefaultValue);
+
+        CinemachineVirtualCamera virtualCamera =
+            (CinemachineVirtualCamera)AccessTools.Field(typeof(FollowPlayer), "virtualCamera").GetValue(followPlayer);
+
+        CinemachineVirtualCamera slowMoVirtualCamera =
+            (CinemachineVirtualCamera)AccessTools.Field(typeof(FollowPlayer), "slowMoVirtualCamera")
+                .GetValue(followPlayer);
+
+        virtualCamera.m_Lens.OrthographicSize = zoom;
+        slowMoVirtualCamera.m_Lens.OrthographicSize = zoom;
+        // ReSharper disable once HeapView.BoxingAllocation
+        cameraSize.SetValue(followPlayer, zoom);
+    }
+
+    private void Update() => CheckDebugCameraZoomFollowPlayer();
+
+    private bool _followPlayerExists;
+    private bool _prevFollowPlayerExists;
+    private void CheckDebugCameraZoomFollowPlayer() {
+        FollowPlayer followPlayer = (FollowPlayer)followPlayerInfo.GetValue(null);
+        _followPlayerExists = followPlayer;
+        if(followPlayer && !_prevFollowPlayerExists) UpdateDebugCameraZoom();
+        _prevFollowPlayerExists = _followPlayerExists;
     }
 }

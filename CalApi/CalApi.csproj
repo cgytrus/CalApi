@@ -21,6 +21,10 @@
       <HintPath>libs\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Cinemachine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>libs\Cinemachine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="MMHOOK_Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>libs\MMHOOK_Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
