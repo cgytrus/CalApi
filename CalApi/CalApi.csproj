@@ -1,7 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net471</TargetFramework>
-    <LangVersion>10</LangVersion>
+    <Product>Cats are Liquid API</Product>
+    <Version>0.2.3</Version>
+    <Company>https://github.com/cgytrus/CalApi</Company>
+    <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
     <OutputPath>bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
@@ -41,6 +44,7 @@
   <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.0.7" PrivateAssets="all" />
     <PackageReference Include="BepInEx.Core" Version="5.4.16" />
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="1.1.0" />
     <PackageReference Include="UnityEngine.Modules" Version="2018.4.36" IncludeAssets="compile" />
   </ItemGroup>
 </Project>

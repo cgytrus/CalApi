@@ -18,10 +18,11 @@ using ProphecySystem;
 using Tayx.Graphy;
 
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace CalApi;
 
-[BepInPlugin("mod.cgytrus.plugins.calapi", "Cats are Liquid API", "0.2.2")]
+[BepInPlugin("mod.cgytrus.plugins.calapi", PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
 //[BepInProcess("CaL-ABP-Windows.exe")]
 public class CalApiPlugin : BaseUnityPlugin {
     private Vector2 _velocity = Vector2.zero;
@@ -48,10 +49,6 @@ public class CalApiPlugin : BaseUnityPlugin {
     private readonly ConfigEntry<bool> _debugGraphy;
 
     private readonly HashSet<GameObject> _playerCats = new();
-
-    // left overs from the light bulb video thing
-    // gonna become a custom items api as a separate mod later
-    //public static Sprite lightBulbSprite { get; private set; }
 
     public CalApiPlugin() {
         Util.logger = Logger;
@@ -86,28 +83,9 @@ public class CalApiPlugin : BaseUnityPlugin {
 
         LoadDebugMode();
 
-        Logger.LogInfo("Initializing miscellaneous stuff");
-
-        On.TitleScreen.Awake += (orig, self) => {
-            orig(self);
-            UI.Initialize();
-        };
-
-        //FieldInfo noMetaballsPartTexture = typeof(Cat.CatPartManager).GetField("noMetaballsPartTexture");
-        /*On.Cat.CatPartManager.Awake += (orig, self) => {
-            if(!self.GetComponent<PlayerActor>()) return;
-
-            lightBulbSprite = (Sprite)noMetaballsPartTexture.GetValue(self);
-            //ItemManager.CreateLightBulb(new Vector3(14.5f, -2.5f, 60f));
-        };*/
-
-        /*CatPartManager.catShown += (caller, _) => {
-            Cat.CatPartManager partManager = (Cat.CatPartManager)caller;
-
-            if(!partManager.GetComponent<PlayerActor>()) return;
-
-            controls.ApplyColor(Color.black);
-        };*/
+        Logger.LogInfo("Initializing other stuff");
+        UI.Setup();
+        UI.AddCopyrightText($"Using {PluginInfo.PLUGIN_NAME} ({PluginInfo.PLUGIN_VERSION})");
 
         Logger.LogInfo("Loading complete");
     }
@@ -254,7 +232,7 @@ public class CalApiPlugin : BaseUnityPlugin {
     }
 
     private void UpdateDebugJumpWhenLiquid() =>
-        CatControlsJumpWhenLiquidPatch.settingEnabled = _debugMode.Value && _debugLiquidJump.Value;
+        CatControlsJumpWhenLiquidPatch.enabled = _debugMode.Value && _debugLiquidJump.Value;
 
     private static readonly FieldInfo followPlayerInfo = AccessTools.Field(typeof(FollowPlayer), "instance");
     private static float _defaultCameraZoom = float.NaN;
