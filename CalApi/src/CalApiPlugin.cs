@@ -16,7 +16,6 @@ using HarmonyLib;
 using ProphecySystem;
 
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace CalApi;
 
