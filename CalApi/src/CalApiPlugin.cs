@@ -43,7 +43,6 @@ public class CalApiPlugin : BaseUnityPlugin {
     private readonly ConfigEntry<bool> _debugLavaWalk;
     private readonly ConfigEntry<bool> _debugAlwaysControlled;
     private readonly ConfigEntry<bool> _debugLiquidJump;
-    private readonly ConfigEntry<bool> _debugGraphy;
 
     private readonly HashSet<GameObject> _playerCats = new();
 
@@ -71,7 +70,6 @@ public class CalApiPlugin : BaseUnityPlugin {
         _debugLavaWalk = Config.Bind("Debug: Other", "Jesus Mode", false, "Walk on lava Pog");
         _debugAlwaysControlled = Config.Bind("Debug: Other", "Always Controlled", false, "");
         _debugLiquidJump = Config.Bind("Debug: Other", "Jump when liquid", false, "");
-        _debugGraphy = Config.Bind("Debug: Other", "Show Graphy", false, "");
     }
 
     private void Awake() {
