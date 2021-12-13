@@ -21,7 +21,7 @@ namespace CalApi;
 
 [BepInPlugin("mod.cgytrus.plugins.calapi", PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
 //[BepInProcess("CaL-ABP-Windows.exe")]
-public class CalApiPlugin : BaseUnityPlugin {
+internal class CalApiPlugin : BaseUnityPlugin {
     private Vector2 _velocity = Vector2.zero;
 
     private readonly ConfigEntry<bool> _debugMode;
