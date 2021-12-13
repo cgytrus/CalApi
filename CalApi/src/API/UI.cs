@@ -61,13 +61,6 @@ public static class UI {
         //_stringDisplayPrefab = Util.FindResourceOfTypeWithName<InputField>("Data Editor String Display")?.gameObject;
         _togglePrefab = Util.FindResourceOfTypeWithName<Toggle>("Data Editor Toggle")?.gameObject;
 
-        Debug.Log(_buttonPrefab);
-        Debug.Log(_dropdownPrefab);
-        Debug.Log(_iconTogglePrefab);
-        Debug.Log(_inputFieldPrefab);
-        Debug.Log(_sliderPrefab);
-        Debug.Log(_togglePrefab);
-
         font = Util.FindResourceOfTypeWithName<Font>("FiraSans-Light");
 
         initialized?.Invoke(null, EventArgs.Empty);
