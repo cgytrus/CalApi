@@ -15,8 +15,6 @@ using HarmonyLib;
 
 using ProphecySystem;
 
-using Tayx.Graphy;
-
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -99,7 +97,6 @@ public class CalApiPlugin : BaseUnityPlugin {
             UpdateDebugLavaWalk();
             UpdateDebugJumpWhenLiquid();
             UpdateDebugCameraZoom();
-            UpdateDebugGraphy();
         };
         _debugMovement.SettingChanged += (_, _) => UpdateDebugMovement();
         _debugNormalMoveSpeed.SettingChanged += (_, _) => UpdateDebugMovement();
@@ -146,9 +143,6 @@ public class CalApiPlugin : BaseUnityPlugin {
         _debugCameraZoom.SettingChanged += (_, _) => UpdateDebugCameraZoom();
         _debugCameraZoomAmount.SettingChanged += (_, _) => UpdateDebugCameraZoom();
         UpdateDebugCameraZoom();
-
-        _debugGraphy.SettingChanged += (_, _) => UpdateDebugGraphy();
-        UI.initialized += (_, _) => UpdateDebugGraphy();
     }
 
     private void ProcessAlwaysControlled(Cat.CatControls controls) {
@@ -255,28 +249,6 @@ public class CalApiPlugin : BaseUnityPlugin {
         slowMoVirtualCamera.m_Lens.OrthographicSize = zoom;
         // ReSharper disable once HeapView.BoxingAllocation
         cameraSize.SetValue(followPlayer, zoom);
-    }
-
-    private bool _graphyInitialized;
-    private GraphyManager? _graphyManager;
-    private void UpdateDebugGraphy() {
-        if(!_graphyManager) {
-            CanvasManager canvasManager =
-                (CanvasManager)AccessTools.Field(typeof(CanvasManager), "instance").GetValue(null);
-            GameObject graphy =
-                (GameObject)AccessTools.Field(typeof(CanvasManager), "graphy").GetValue(canvasManager);
-            _graphyManager = graphy.GetComponent<GraphyManager>();
-            graphy.transform.SetParent(null);
-        }
-
-        if(_debugMode.Value && _debugGraphy.Value) {
-            if(_graphyInitialized) _graphyManager!.Enable();
-            else {
-                _graphyManager!.gameObject.SetActive(true);
-                _graphyInitialized = true;
-            }
-        }
-        else if(_graphyInitialized) _graphyManager!.Disable();
     }
 
     private void Update() => CheckDebugCameraZoomFollowPlayer();
