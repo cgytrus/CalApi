@@ -26,6 +26,8 @@ public static class CustomizationProfiles {
             UpdateCurrentPath();
             profileChanged?.Invoke(null, EventArgs.Empty);
         };
+
+        Directory.CreateDirectory(defaultPath);
     }
 
     private static void UpdateCurrentPath() => currentPath = Path.Combine(profilesPath, _customizationProfile!.Value);
