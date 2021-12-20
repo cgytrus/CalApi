@@ -22,8 +22,6 @@ namespace CalApi;
 [BepInPlugin("mod.cgytrus.plugins.calapi", PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
 //[BepInProcess("CaL-ABP-Windows.exe")]
 internal class CalApiPlugin : BaseUnityPlugin {
-    private Vector2 _velocity = Vector2.zero;
-
     private readonly ConfigEntry<bool> _debugMode;
 
     private readonly ConfigEntry<bool> _debugMovement;
@@ -70,6 +68,8 @@ internal class CalApiPlugin : BaseUnityPlugin {
         _debugLavaWalk = Config.Bind("Debug: Other", "Jesus Mode", false, "Walk on lava Pog");
         _debugAlwaysControlled = Config.Bind("Debug: Other", "Always Controlled", false, "");
         _debugLiquidJump = Config.Bind("Debug: Other", "Jump when liquid", false, "");
+
+        CustomizationProfiles.LoadSettings(Config);
     }
 
     private void Awake() {
@@ -150,6 +150,7 @@ internal class CalApiPlugin : BaseUnityPlugin {
         Prophet.ActiveProphecyProhibitsControl = 0;
     }
 
+    private Vector2 _velocity = Vector2.zero;
     private void ProcessNoClip(Cat.CatControls controls) {
         if(!_debugNoClip.Value) return;
         bool up = controls.Player.GetButton("Jump");

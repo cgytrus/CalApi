@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 
 using BepInEx.Logging;
@@ -23,6 +24,8 @@ public static class Util {
                                                    | BindingFlags.SetField
                                                    | BindingFlags.GetProperty
                                                    | BindingFlags.SetProperty;
+
+    public static readonly string moddedStreamingAssetsPath = Path.Combine(Application.streamingAssetsPath, "Modded");
 
     public static Object? FindResourceOfTypeWithName(Type type, string name) {
         // ReSharper disable once LoopCanBeConvertedToQuery
