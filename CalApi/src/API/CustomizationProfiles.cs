@@ -17,7 +17,7 @@ public static class CustomizationProfiles {
     public static readonly string currentPath = Path.Combine(profilesPath, _customizationProfile!.Value);
     public static event EventHandler? profileChanged;
 
-    public static void LoadSettings(ConfigFile config) {
+    internal static void LoadSettings(ConfigFile config) {
         _customizationProfile = config.Bind("General", "CustomizationProfile", DefaultProfile,
             "The customization profile name to be used by mods for customizing certain aspects of the mod or the game.");
 
