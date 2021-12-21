@@ -13,22 +13,27 @@ public static class CustomizationProfiles {
     private static readonly string profilesPath =
         Path.Combine(Util.moddedStreamingAssetsPath, "Customization Profiles");
 
-    public static readonly string defaultPath = Path.Combine(profilesPath, DefaultProfile);
-    public static string? currentPath;
+    public static string defaultPath { get; } = Path.Combine(profilesPath, DefaultProfile);
+    public static string? currentPath { get; private set; }
     public static event EventHandler? profileChanged;
 
     internal static void LoadSettings(ConfigFile config) {
         _customizationProfile = config.Bind("General", "CustomizationProfile", DefaultProfile,
             "The customization profile name to be used by mods for customizing certain aspects of the mod or the game.");
 
-        UpdateCurrentPath();
+        if(!TryUpdateCurrentPath()) currentPath = defaultPath;
         _customizationProfile.SettingChanged += (_, _) => {
-            UpdateCurrentPath();
+            if(!TryUpdateCurrentPath()) return;
             profileChanged?.Invoke(null, EventArgs.Empty);
         };
 
         Directory.CreateDirectory(defaultPath);
     }
 
-    private static void UpdateCurrentPath() => currentPath = Path.Combine(profilesPath, _customizationProfile!.Value);
+    private static bool TryUpdateCurrentPath() {
+        string attemptPath = Path.Combine(profilesPath, _customizationProfile!.Value);
+        if(!Directory.Exists(attemptPath)) return false;
+        currentPath = attemptPath;
+        return true;
+    }
 }
