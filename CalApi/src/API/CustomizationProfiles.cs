@@ -7,6 +7,7 @@ namespace CalApi.API;
 
 public static class CustomizationProfiles {
     private const string DefaultProfile = "Default";
+    private const string ReadmeName = "README.txt";
 
     private static ConfigEntry<string>? _customizationProfile;
 
@@ -20,7 +21,7 @@ public static class CustomizationProfiles {
     internal static void LoadSettings(ConfigFile config) {
         _customizationProfile = config.Bind("General", "CustomizationProfile", DefaultProfile,
             $@"The customization profile name to be used by mods for customizing certain aspects of the mod or the game.
-Profiles are located in `{profilesPath}`");
+Profiles are located in `{profilesPath}`, read `{ReadmeName}` inside that folder for more info.");
 
         if(!TryUpdateCurrentPath()) currentPath = defaultPath;
         _customizationProfile.SettingChanged += (_, _) => {
@@ -29,6 +30,7 @@ Profiles are located in `{profilesPath}`");
         };
 
         Directory.CreateDirectory(defaultPath);
+        CreateReadme(Path.Combine(profilesPath, ReadmeName));
     }
 
     private static bool TryUpdateCurrentPath() {
@@ -36,5 +38,11 @@ Profiles are located in `{profilesPath}`");
         if(!Directory.Exists(attemptPath)) return false;
         currentPath = attemptPath;
         return true;
+    }
+
+    private static void CreateReadme(string path) {
+        if(File.Exists(path)) return;
+        File.WriteAllText(path, @"This is the folder that contains customization files defined and used by mods.
+Check the Default profile folder for mod-specific configuration instructions.");
     }
 }
