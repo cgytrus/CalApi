@@ -19,7 +19,8 @@ public static class CustomizationProfiles {
 
     internal static void LoadSettings(ConfigFile config) {
         _customizationProfile = config.Bind("General", "CustomizationProfile", DefaultProfile,
-            "The customization profile name to be used by mods for customizing certain aspects of the mod or the game.");
+            $@"The customization profile name to be used by mods for customizing certain aspects of the mod or the game.
+Profiles are located in `{profilesPath}`");
 
         if(!TryUpdateCurrentPath()) currentPath = defaultPath;
         _customizationProfile.SettingChanged += (_, _) => {
