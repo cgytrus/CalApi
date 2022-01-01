@@ -3,6 +3,13 @@ using System.IO;
 
 using BepInEx.Configuration;
 
+// shut up there's no typo
+// ReSharper disable once CommentTypo
+// you stupid dumbass it's an APIIIIII
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable EventNeverSubscribedTo.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+
 namespace CalApi.API;
 
 public static class CustomizationProfiles {
