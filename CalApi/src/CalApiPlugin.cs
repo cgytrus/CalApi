@@ -9,6 +9,7 @@ namespace CalApi;
 //[BepInProcess("CaL-ABP-Windows.exe")]
 internal class CalApiPlugin : BaseUnityPlugin {
     private readonly DebugMain _debugMode;
+    private readonly EditorBypass _editorBypass;
 
     public CalApiPlugin() {
         Util.logger = Logger;
@@ -16,7 +17,7 @@ internal class CalApiPlugin : BaseUnityPlugin {
         Logger.LogInfo("Loading settings");
 
         _debugMode = new DebugMain(Config);
-
+        _editorBypass = new EditorBypass(Config);
         CustomizationProfiles.LoadSettings(Config);
     }
 
@@ -26,6 +27,9 @@ internal class CalApiPlugin : BaseUnityPlugin {
 
         Logger.LogInfo("Loading debug mode");
         _debugMode.Load();
+
+        Logger.LogInfo("Loading editor bypass");
+        _editorBypass.Load();
 
         Logger.LogInfo("Initializing other stuff");
         UI.Setup();
