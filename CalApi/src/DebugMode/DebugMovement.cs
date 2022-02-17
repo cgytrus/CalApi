@@ -79,7 +79,7 @@ internal class DebugMovement : IDebug {
         }
     }
 
-    public void CatControlsAwake() => SettingsChanged();
+    public void CatControlsAwake(CatControls controls) => SettingsChanged();
     public void CatControlsInputCheck(CatControls controls) { }
     public void CatControlsMove(CatControls controls) { }
     public void Update() { }

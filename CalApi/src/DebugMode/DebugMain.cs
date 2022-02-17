@@ -59,8 +59,10 @@ internal class DebugMain {
         };
     }
 
+    // ReSharper disable once SuggestBaseTypeForParameter
     private void CatControlsAwake(CatControls controls) {
-        foreach(IDebug debug in _debugs) debug.CatControlsAwake();
+        if(!enabled || !_playerCats.Contains(controls.gameObject)) return;
+        foreach(IDebug debug in _debugs) debug.CatControlsAwake(controls);
     }
 
     private void CatControlsInputCheck(CatControls controls) {

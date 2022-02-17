@@ -3,6 +3,8 @@ using System.Reflection;
 
 using BepInEx.Configuration;
 
+using Cat;
+
 using Cinemachine;
 
 using HarmonyLib;
@@ -54,7 +56,7 @@ internal class DebugCameraZoom : IDebug {
         cameraSize.SetValue(followPlayer, zoom);
     }
 
-    public void CatControlsAwake() { }
+    public void CatControlsAwake(CatControls controls) { }
     public void CatControlsInputCheck(Cat.CatControls controls) { }
     public void CatControlsMove(Cat.CatControls controls) { }
 

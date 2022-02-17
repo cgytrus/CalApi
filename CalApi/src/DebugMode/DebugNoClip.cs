@@ -4,6 +4,8 @@ using BepInEx.Configuration;
 
 using CalApi.API.Cat;
 
+using Cat;
+
 using UnityEngine;
 
 namespace CalApi.DebugMode;
@@ -35,12 +37,13 @@ internal class DebugNoClip : IDebug {
     }
 
     public void CatControlsMove(Cat.CatControls controls) {
+        if(!_enabled.Value) return;
         foreach(Rigidbody2D rb in controls.GetPartManager().GetPartRigidbodies()) {
             rb.bodyType = RigidbodyType2D.Kinematic;
             rb.velocity = _velocity;
         }
     }
 
-    public void CatControlsAwake() { }
+    public void CatControlsAwake(CatControls controls) { }
     public void Update() { }
 }

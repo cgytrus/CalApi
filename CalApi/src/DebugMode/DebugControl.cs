@@ -4,6 +4,8 @@ using BepInEx.Configuration;
 
 using CalApi.Patches;
 
+using Cat;
+
 using ProphecySystem;
 
 namespace CalApi.DebugMode;
@@ -39,7 +41,7 @@ internal class DebugControl : IDebug {
         Prophet.ActiveProphecyProhibitsControl = 0;
     }
 
-    public void CatControlsAwake() { }
+    public void CatControlsAwake(CatControls controls) { }
     public void CatControlsMove(Cat.CatControls controls) { }
     public void Update() { }
 }
