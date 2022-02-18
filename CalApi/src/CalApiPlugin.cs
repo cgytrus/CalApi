@@ -35,6 +35,8 @@ internal class CalApiPlugin : BaseUnityPlugin {
         UI.Setup();
         UI.AddCopyrightText($"Using {PluginInfo.PLUGIN_NAME} ({PluginInfo.PLUGIN_VERSION})");
 
+        Prophecies.Setup(Logger);
+
         Logger.LogInfo("Loading complete");
     }
 
