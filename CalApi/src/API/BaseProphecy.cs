@@ -18,7 +18,9 @@ public abstract class BaseProphecy : MonoBehaviour {
         (Action<Prophet, int, bool>)Delegate.CreateDelegate(typeof(Action<Prophet, int, bool>),
             AccessTools.Method(typeof(Prophet), "DeleteProphecyFromList"));
 
-    public abstract IEnumerator Performer();
+    public virtual bool skipNext => false;
+
+    public abstract IEnumerator Performer(Prophet prophet, int index);
 
     public void MoveProphecyUp() {
         Prophet prophet = GetComponent<Prophet>();

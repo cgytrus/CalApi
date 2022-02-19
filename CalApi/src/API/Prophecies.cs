@@ -166,6 +166,8 @@ public static class Prophecies {
             il.Body.Variables.Add(new VariableDefinition(il.Module.ImportReference(typeof(Coroutine))));
             int prophecy = il.Body.Variables.Count;
             il.Body.Variables.Add(new VariableDefinition(il.Module.ImportReference(typeof(BaseProphecy))));
+            int skipNext = il.Body.Variables.Count;
+            il.Body.Variables.Add(new VariableDefinition(il.Module.ImportReference(typeof(bool))));
 
             ILCursor cursor = new(il);
 
@@ -216,15 +218,21 @@ public static class Prophecies {
             cursor.Emit(OpCodes.Ldloc, prophecy);
             cursor.Emit(OpCodes.Brfalse_S, loopEndLabel);
 
-            // ... StartCoroutine(prophecy.Performer());
+            // performerCoroutine = StartCoroutine(prophecy.Performer(prophet, i));
             cursor.Emit(OpCodes.Ldloc_1);
             cursor.Emit(OpCodes.Ldloc, prophecy);
+            cursor.Emit(OpCodes.Ldloc_1);
+            for(int i = 2; i < 4; i++) {
+                Instruction code = ifCursor.Instrs[ifCursor.Index + i];
+                cursor.Emit(code.OpCode, code.Operand);
+            }
             cursor.Emit<BaseProphecy>(OpCodes.Callvirt, nameof(BaseProphecy.Performer));
             cursor.Emit(OpCodes.Call,
                 AccessTools.Method(typeof(MonoBehaviour), nameof(MonoBehaviour.StartCoroutine),
                     new[] { typeof(IEnumerator) }));
-            // yield return ...
             cursor.Emit(OpCodes.Stloc, performerCoroutine);
+
+            // yield return performerCoroutine;
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.Emit(OpCodes.Ldloc, performerCoroutine);
             for(int i = 0; i < 9; i++) {
@@ -244,6 +252,24 @@ public static class Prophecies {
                         break;
                 }
             }
+
+            // skipNext = prophet.prophecies[i].skipNext;
+            for(int i = 0; i < 5; i++) {
+                Instruction code = ifCursor.Instrs[ifCursor.Index + i];
+                cursor.Emit(code.OpCode, code.Operand);
+            }
+            cursor.Emit<BaseProphecy>(OpCodes.Callvirt, $"get_{nameof(BaseProphecy.skipNext)}");
+            cursor.Emit(OpCodes.Stloc, skipNext);
+
+            cursor.GotoNext(MoveType.After, code => code.MatchAdd()); // ++i
+
+            // skipNext ? i += 2 : ++i; (actual: i += 1 + skipNext;)
+            cursor.Emit(OpCodes.Ldloc, skipNext);
+            cursor.Emit(OpCodes.Add);
+
+            // skipNext = false;
+            cursor.Emit(OpCodes.Ldc_I4_0);
+            cursor.Emit(OpCodes.Stloc, skipNext);
         }
 
         IDetour tellDetour = new ILHook(AccessTools.Method(AccessTools.TypeByName("<Tell>d__42"), "MoveNext"),
