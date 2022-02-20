@@ -10,6 +10,12 @@ using UnityEngine;
 namespace CalApi.API;
 
 public abstract class BaseProphecy : MonoBehaviour {
+    [Serializable]
+    internal struct Intermediate {
+        public string? customProphecyId;
+        public Intermediate(string? customProphecyId) => this.customProphecyId = customProphecyId;
+    }
+
     private static readonly Action<Prophet, int, int> moveProphecyInList =
         (Action<Prophet, int, int>)Delegate.CreateDelegate(typeof(Action<Prophet, int, int>),
             AccessTools.Method(typeof(Prophet), "MoveProphecyInList"));
@@ -17,6 +23,9 @@ public abstract class BaseProphecy : MonoBehaviour {
     private static readonly Action<Prophet, int, bool> deleteProphecyFromList =
         (Action<Prophet, int, bool>)Delegate.CreateDelegate(typeof(Action<Prophet, int, bool>),
             AccessTools.Method(typeof(Prophet), "DeleteProphecyFromList"));
+
+    // ReSharper disable once NotAccessedField.Global
+    [SerializeField] internal string customProphecyId = "";
 
     public virtual bool skipNext => false;
 

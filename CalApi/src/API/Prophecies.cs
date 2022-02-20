@@ -41,10 +41,12 @@ public static class Prophecies {
     }
 
     public struct Prophecy {
+        public Type fallbackType { get; }
         public Type type { get; }
         public string icon { get; }
 
-        public Prophecy(Type type, string icon) {
+        public Prophecy(Type fallbackType, Type type, string icon) {
+            this.fallbackType = fallbackType;
             this.type = type;
             this.icon = icon;
         }
@@ -76,7 +78,7 @@ public static class Prophecies {
 
                 foreach(Type type in startType.Assembly.GetTypes().Where(type =>
                             type.Namespace == lookForNamespace && type.Name == $"{prophecyName}Prophecy"))
-                    RegisterProphecy(type.ToString(), type, attribute.iconNames[i]);
+                    RegisterProphecy(type.ToString(), type, type, attribute.iconNames[i]);
             }
         }
     }
@@ -129,34 +131,41 @@ public static class Prophecies {
 
         PatchPerformerRunner(logger);
 
+        void RemoveLoopAndPrepareArgs(ILCursor cursor) {
+            // remove everything from the loop
+            cursor.GotoNext(code => code.MatchStloc(0));
+            cursor.Index += 2;
+            ILCursor endCursor = new(cursor);
+            endCursor.GotoNext(code => code.MatchStloc(0));
+            endCursor.Index -= 3;
+            cursor.RemoveRange(endCursor.Index - cursor.Index);
+
+            // prepare args (the actual method call is emitted after this method is called)
+            // ...(this, index, prophecyStrings, prophecyTypeStrings);
+            cursor.Emit(OpCodes.Ldarg_0);
+            cursor.Index--;
+            ILLabel loopLabel = cursor.MarkLabel();
+            cursor.Index++;
+            cursor.Emit(OpCodes.Ldloc_0);
+            cursor.Emit(OpCodes.Ldarg_0);
+            cursor.Emit<Prophet>(OpCodes.Ldfld, "prophecyStrings");
+            cursor.Emit(OpCodes.Ldarg_0);
+            cursor.Emit<Prophet>(OpCodes.Ldfld, "prophecyTypeStrings");
+
+            // fix loop label
+            endCursor.GotoNext(code => code.MatchBlt(out _));
+            endCursor.Remove();
+            endCursor.Emit(OpCodes.Blt, loopLabel);
+        }
         IL.ProphecySystem.Prophet.ConvertPropheciesToStringList += il => {
             ILCursor cursor = new(il);
-            cursor.GotoNext(MoveType.After, code => code.MatchCallvirt<object>(nameof(object.GetType)));
-            cursor.Remove();
-            cursor.Emit(OpCodes.Call, AccessTools.Method(typeof(Prophecies), nameof(GetProphecyId)));
+            RemoveLoopAndPrepareArgs(cursor);
+            cursor.Emit(OpCodes.Call, AccessTools.Method(typeof(Prophecies), nameof(ConvertProphecyToStrings)));
         };
-
         IL.ProphecySystem.Prophet.ConvertStringListToProphecies += il => {
-            int prophecyType = il.Body.Variables.Count;
-            il.Body.Variables.Add(new VariableDefinition(il.Module.ImportReference(typeof(Type))));
-
             ILCursor cursor = new(il);
-            const int caseCount = 9;
-            cursor.GotoNext(code => code.MatchCall<Type>(nameof(Type.GetType)));
-            // GetType + prophecyTypeStrings[index] + some weird string switch hash shit???? + switch cases
-            cursor.RemoveRange(2 + 5 + 43 + 5 * caseCount);
-            cursor.Emit(OpCodes.Call, AccessTools.Method(typeof(Prophecies), nameof(GetProphecyType)));
-            cursor.Emit(OpCodes.Stloc, prophecyType);
-            cursor.GotoNext(code =>
-                code.MatchCall(AccessTools.PropertyGetter(typeof(Component), nameof(Component.gameObject))));
-            cursor.Index++;
-            cursor.Remove();
-            cursor.Emit(OpCodes.Ldloc, prophecyType);
-            cursor.Emit(OpCodes.Call, AccessTools.Method(typeof(GameObject), nameof(GameObject.AddComponent),
-                new[] { typeof(Type) }));
-            cursor.GotoNext(code => code.MatchBr(out _));
-            // 1+6+9 (16) instructions per case but we utilized one case so it's 1 less
-            cursor.RemoveRange((1 + 6 + 9) * (caseCount - 1));
+            RemoveLoopAndPrepareArgs(cursor);
+            cursor.Emit(OpCodes.Call, AccessTools.Method(typeof(Prophecies), nameof(ConvertStringsToProphecy)));
         };
     }
 
@@ -205,11 +214,15 @@ public static class Prophecies {
 
             // important to not return after this as we're now emitting IL here!!
 
-            // if(prophet.prophecies[i] is BaseProphecy prophecy)
-            for(int i = 0; i < 5; i++) {
-                Instruction code = ifCursor.Instrs[ifCursor.Index + i];
-                cursor.Emit(code.OpCode, code.Operand);
+            void EmitCurrentProphecy() {
+                for(int i = 0; i < 5; i++) {
+                    Instruction code = ifCursor.Instrs[ifCursor.Index + i];
+                    cursor.Emit(code.OpCode, code.Operand);
+                }
             }
+
+            // if(prophet.prophecies[i] is BaseProphecy prophecy)
+            EmitCurrentProphecy();
             cursor.Index -= 5; // fuck.
             loopEndCursor.Instrs[loopEndCursor.Index].Operand = cursor.MarkLabel();
             cursor.Index += 5;
@@ -240,24 +253,18 @@ public static class Prophecies {
                 switch(i) {
                     case 2:
                         cursor.Emit(OpCodes.Ldc_I4_S, (sbyte)switchLabels.Length);
-                        break;
+                        continue;
                     case 6:
                         Array.Resize(ref switchLabels, switchLabels.Length + 1);
                         switchLabels[switchLabels.Length - 1] = cursor.MarkLabel();
                         switchCursor.Instrs[switchCursor.Index].Operand = switchLabels;
-                        cursor.Emit(code.OpCode, code.Operand);
-                        break;
-                    default:
-                        cursor.Emit(code.OpCode, code.Operand);
                         break;
                 }
+                cursor.Emit(code.OpCode, code.Operand);
             }
 
             // skipNext = prophet.prophecies[i].skipNext;
-            for(int i = 0; i < 5; i++) {
-                Instruction code = ifCursor.Instrs[ifCursor.Index + i];
-                cursor.Emit(code.OpCode, code.Operand);
-            }
+            EmitCurrentProphecy();
             cursor.Emit<BaseProphecy>(OpCodes.Callvirt, $"get_{nameof(BaseProphecy.skipNext)}");
             cursor.Emit(OpCodes.Stloc, skipNext);
 
@@ -275,6 +282,40 @@ public static class Prophecies {
         IDetour tellDetour = new ILHook(AccessTools.Method(AccessTools.TypeByName("<Tell>d__42"), "MoveNext"),
             Manipulator);
         tellDetour.Apply();
+    }
+
+    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+    private static void ConvertProphecyToStrings(Prophet prophet, int index, List<string> prophecyStrings,
+        List<string> prophecyTypeStrings) {
+        MonoBehaviour prophecy = prophet.prophecies[index];
+
+        Type prophecyType = prophecy.GetType();
+        string? prophecyId = GetProphecyId(prophecyType);
+
+        if(prophecy is BaseProphecy customProphecy && prophecyId is not null)
+            customProphecy.customProphecyId = prophecyId;
+
+        prophecyStrings.Add(
+            ItemManager.GetStringFromItemAdditionalData(new List<Component> { prophecy }).Split('\n')[2]);
+        prophecyTypeStrings.Add(prophecyId is null ? prophecyType.ToString() :
+            GetProphecyFallbackType(prophecyId).ToString());
+    }
+
+    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+    private static void ConvertStringsToProphecy(Prophet prophet, int index, List<string> prophecyStrings,
+        List<string> prophecyTypeStrings) {
+        // try to get the id of the custom prophecy
+        BaseProphecy.Intermediate intermediateProphecy =
+            JsonUtility.FromJson<BaseProphecy.Intermediate>(prophecyStrings[index]);
+
+        // if the id is null, it's not a custom prophecy and we load it like a normal vanilla prophecy
+        // otherwise, we use the id to get the actual type of the custom prophecy
+        Type? prophecy = intermediateProphecy.customProphecyId is null ?
+            typeof(Prophet).Assembly.GetType(prophecyTypeStrings[index]) :
+            (Type?)GetProphecyType(intermediateProphecy.customProphecyId);
+
+        prophet.prophecies.Add((MonoBehaviour)prophet.gameObject.AddComponent(prophecy));
+        JsonUtility.FromJsonOverwrite(prophecyStrings[index], prophet.prophecies[index]);
     }
 
     private static int UpdatePropheciesList(int minPropheciesPerRow, int additionalProphecies, int row, int startIndex,
@@ -319,14 +360,16 @@ public static class Prophecies {
 
     public static void AddIcon(string name, Icon icon) => icons.Add(name, icon);
 
-    public static void RegisterProphecy<T>(string id, string icon) => RegisterProphecy(id, typeof(T), icon);
-    public static void RegisterProphecy(string id, Type type, string icon) =>
-        RegisterProphecy(id, new Prophecy(type, icon));
+    public static void RegisterProphecy<TFallback, T>(string id, string icon) =>
+        RegisterProphecy(id, typeof(TFallback), typeof(T), icon);
+    public static void RegisterProphecy(string id, Type fallbackType, Type type, string icon) =>
+        RegisterProphecy(id, new Prophecy(fallbackType, type, icon));
     public static void RegisterProphecy(string id, Prophecy prophecy) {
         prophecies.Add(id, prophecy);
         propheciesByType.Add(prophecy.type, id);
     }
 
+    public static Type GetProphecyFallbackType(string id) => prophecies[id].fallbackType;
     public static Type GetProphecyType(string id) => prophecies[id].type;
     public static string? GetProphecyId(Type type) => propheciesByType.TryGetValue(type, out string id) ? id : null;
 }
