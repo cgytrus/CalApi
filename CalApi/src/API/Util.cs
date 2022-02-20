@@ -44,9 +44,11 @@ public static class Util {
         Assembly assembly = Assembly.GetCallingAssembly();
         ForEachImplementation(assembly, typeof(IPatch), Action);
         void Action(Type type) {
-            try { (Activator.CreateInstance(type) as IPatch)?.Apply(); }
+            IPatch? patch = null;
+            try { patch = Activator.CreateInstance(type) as IPatch; }
             catch { /* ignored */ }
             ForEachImplementation(assembly, type, Action);
+            patch?.Apply();
         }
     }
 
