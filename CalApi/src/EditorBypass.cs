@@ -11,6 +11,7 @@ using Mono.Cecil.Cil;
 using MonoMod.Cil;
 
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace CalApi;
 
@@ -21,6 +22,7 @@ public class EditorBypass {
     private readonly ConfigEntry<bool> _itemCostLimitBypass;
     private readonly ConfigEntry<bool> _banListsBypass;
     private readonly ConfigEntry<bool> _maxRoomWorldCountBypass;
+    private readonly ConfigEntry<bool> _nameLengthLimitBypass;
     private readonly ConfigEntry<bool> _verificationBypass;
 
     public EditorBypass(ConfigFile config) {
@@ -29,6 +31,7 @@ public class EditorBypass {
         "Required to be enabled for players as well!");
         _banListsBypass = config.Bind(SectionName, "BanListsBypass", false, "");
         _maxRoomWorldCountBypass = config.Bind(SectionName, "MaxRoomWorldCountBypass", false, "");
+        _nameLengthLimitBypass = config.Bind(SectionName, "NameLengthLimitBypass", false, "");
         _verificationBypass = config.Bind(SectionName, "VerificationBypass", false, "");
     }
 
@@ -49,6 +52,20 @@ public class EditorBypass {
                 cursor.Emit(OpCodes.Not);
                 cursor.Emit(OpCodes.And);
             }
+        };
+
+        int vanillaCharacterLimit = -1;
+        InputField? lastNewName = null;
+        On.CreateUI.Awake += (orig, self) => {
+            orig(self);
+            lastNewName = (InputField)AccessTools.Field(typeof(CreateUI), "newName").GetValue(self);
+            if(vanillaCharacterLimit < 0) vanillaCharacterLimit = lastNewName.characterLimit;
+            lastNewName.characterLimit = _nameLengthLimitBypass.Value ? 0 : vanillaCharacterLimit;
+        };
+
+        _nameLengthLimitBypass.SettingChanged += (_, _) => {
+            if(lastNewName && vanillaCharacterLimit >= 0)
+                lastNewName!.characterLimit = _nameLengthLimitBypass.Value ? 0 : vanillaCharacterLimit;
         };
 
         VerificationBypass();
