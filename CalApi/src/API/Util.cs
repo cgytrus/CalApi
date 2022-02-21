@@ -46,9 +46,13 @@ public static class Util {
         void Action(Type type) {
             IPatch? patch = null;
             try { patch = Activator.CreateInstance(type) as IPatch; }
+            catch(TargetInvocationException ex) { logger?.LogError(ex); } // constructor exception
             catch { /* ignored */ }
+
+            try { patch?.Apply(); }
+            catch(Exception ex) { logger?.LogError(ex); }
+
             ForEachImplementation(assembly, type, Action);
-            patch?.Apply();
         }
     }
 
