@@ -3,10 +3,13 @@ using System.Linq;
 
 using BepInEx.Configuration;
 
+using JetBrains.Annotations;
+
 namespace CalApi.Patches;
 
-// ReSharper disable once UnusedType.Global
+[UsedImplicitly]
 public abstract class ConfigurablePatch : IPatch {
+    [UsedImplicitly]
     protected bool enabled { get; private set; }
 
     protected ConfigurablePatch(ConfigFile config, string section, string? key, bool defaultValue,

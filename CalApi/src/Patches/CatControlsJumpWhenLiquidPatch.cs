@@ -1,12 +1,14 @@
 ﻿using Cat;
 
+using JetBrains.Annotations;
+
 using Mono.Cecil.Cil;
 
 using MonoMod.Cil;
 
 namespace CalApi.Patches;
 
-// ReSharper disable once ClassNeverInstantiated.Global
+[UsedImplicitly]
 internal class CatControlsJumpWhenLiquidPatch : IPatch {
     public static bool enabled;
 

@@ -11,8 +11,6 @@ using UnityEngine;
 
 namespace CalApi.API.Cat;
 
-[SuppressMessage("ReSharper", "PossibleNullReferenceException")]
-[SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
 public static class CatPartManagerExtensions {
     // https://www.youtube.com/watch?v=er9nD-usM1A
     private static readonly Func<CatPartManager, List<GameObject>> getParts =
