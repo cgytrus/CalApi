@@ -36,24 +36,35 @@ public class EditorBypass {
     }
 
     public void Load() {
-        On.ItemClipCheck.Check += (orig, self) => !_clippingItemsBypass.Value && orig(self);
-        On.PolyMap.PolyHelper.GetCostOfItem += (orig, itemId) => _itemCostLimitBypass.Value ? 0 : orig(itemId);
-        On.PolyMap.PolyHelper.IsItemInBanList +=
-            (orig, banListName, itemId) => !_banListsBypass.Value && orig(banListName, itemId);
+        ClippingItemsBypass();
+        ItemCostLimitBypass();
+        BanListsBypass();
+        MaxWorldRoomCountBypass();
+        NameLengthLimitBypass();
+        VerificationBypass();
+    }
 
-        IL.PickerUI.SetMode_Mode += il => {
-            ILCursor cursor = new(il);
+    private void ClippingItemsBypass() => On.ItemClipCheck.Check += (orig, self) => !_clippingItemsBypass.Value && orig(self);
 
-            for(int i = 0; i < 2; i++) {
-                int localIndex = 3 + i;
-                cursor.GotoNext(code => code.MatchStloc(localIndex));
-                cursor.EmitReference(_maxRoomWorldCountBypass);
-                cursor.Emit<ConfigEntry<bool>>(OpCodes.Call, $"get_{nameof(ConfigEntry<bool>.Value)}");
-                cursor.Emit(OpCodes.Not);
-                cursor.Emit(OpCodes.And);
-            }
-        };
+    private void ItemCostLimitBypass() => On.PolyMap.PolyHelper.GetCostOfItem += (orig, itemId) => _itemCostLimitBypass.Value ? 0 : orig(itemId);
 
+    private void BanListsBypass() => On.PolyMap.PolyHelper.IsItemInBanList +=
+        (orig, banListName, itemId) => !_banListsBypass.Value && orig(banListName, itemId);
+
+    private void MaxWorldRoomCountBypass() => IL.PickerUI.SetMode_Mode += il => {
+        ILCursor cursor = new(il);
+
+        for(int i = 0; i < 2; i++) {
+            int localIndex = 3 + i;
+            cursor.GotoNext(code => code.MatchStloc(localIndex));
+            cursor.EmitReference(_maxRoomWorldCountBypass);
+            cursor.Emit<ConfigEntry<bool>>(OpCodes.Call, $"get_{nameof(ConfigEntry<bool>.Value)}");
+            cursor.Emit(OpCodes.Not);
+            cursor.Emit(OpCodes.And);
+        }
+    };
+
+    private void NameLengthLimitBypass() {
         int vanillaCharacterLimit = -1;
         InputField? lastNewName = null;
         On.CreateUI.Awake += (orig, self) => {
@@ -67,8 +78,6 @@ public class EditorBypass {
             if(lastNewName && vanillaCharacterLimit >= 0)
                 lastNewName!.characterLimit = _nameLengthLimitBypass.Value ? 0 : vanillaCharacterLimit;
         };
-
-        VerificationBypass();
     }
 
     private void VerificationBypass() {
