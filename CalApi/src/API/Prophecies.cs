@@ -308,9 +308,11 @@ public static class Prophecies {
         BaseProphecy.Intermediate intermediateProphecy =
             JsonUtility.FromJson<BaseProphecy.Intermediate>(prophecyStrings[index]);
 
-        // if the id is null, it's not a custom prophecy and we load it like a normal vanilla prophecy
+        // if the id is null or a prophecy with this id doesn't exist,
+        // it's not a custom prophecy and we load it like a normal vanilla prophecy
         // otherwise, we use the id to get the actual type of the custom prophecy
-        Type? prophecy = intermediateProphecy.customProphecyId is null ?
+        Type? prophecy = intermediateProphecy.customProphecyId is null ||
+                         !prophecies.ContainsKey(intermediateProphecy.customProphecyId) ?
             typeof(Prophet).Assembly.GetType(prophecyTypeStrings[index]) :
             (Type?)GetProphecyType(intermediateProphecy.customProphecyId);
 
