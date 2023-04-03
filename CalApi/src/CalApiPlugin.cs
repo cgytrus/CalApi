@@ -5,7 +5,7 @@ using CalApi.DebugMode;
 
 namespace CalApi;
 
-[BepInPlugin("mod.cgytrus.plugins.calapi", PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+[BepInPlugin("mod.cgytrus.plugins.calapi", CalApiPluginInfo.PLUGIN_NAME, CalApiPluginInfo.PLUGIN_VERSION)]
 //[BepInProcess("CaL-ABP-Windows.exe")]
 internal class CalApiPlugin : BaseUnityPlugin {
     private readonly DebugMain _debugMode;
@@ -33,7 +33,7 @@ internal class CalApiPlugin : BaseUnityPlugin {
 
         Logger.LogInfo("Initializing other stuff");
         UI.Setup();
-        UI.AddCopyrightText($"Using {PluginInfo.PLUGIN_NAME} ({PluginInfo.PLUGIN_VERSION})");
+        UI.AddCopyrightText($"Using {CalApiPluginInfo.PLUGIN_NAME} ({CalApiPluginInfo.PLUGIN_VERSION})");
 
         Prophecies.Setup(Logger);
 

@@ -1,13 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FA35B6EC-49BA-453F-85AB-24B246B41616}"
-    ProjectSection(SolutionItems) = preProject
-        .editorconfig = .editorconfig
-        .gitignore = .gitignore
-        LICENSE = LICENSE
-        README.md = README.md
-        NuGet.config = NuGet.config
-    EndProjectSection
+				ProjectSection(SolutionItems) = preProject
+								.gitignore = .gitignore
+								LICENSE = LICENSE
+								README.md = README.md
+								NuGet.config = NuGet.config
+				EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalApi", "CalApi\CalApi.csproj", "{ADB9BF51-6A82-4E95-B439-6ADD61CD527C}"
 EndProject

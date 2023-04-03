@@ -1,49 +1,51 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net471</TargetFramework>
-    <Product>Cats are Liquid API</Product>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>CalApi</AssemblyName>
+    <Title>Cats are Liquid API</Title>
+    <Authors>ConfiG</Authors>
+    <Description>An API mod for Cats are Liquid - A Better Place</Description>
     <Version>0.2.8</Version>
     <Company>https://github.com/cgytrus/CalApi</Company>
+    <Copyright>Copyright © ConfiG 2023</Copyright>
+    
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>icon.png</PackageIcon>
+    <RepositoryUrl>https://github.com/cgytrus/CalApi</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>mod;modding;api;bepinex</PackageTags>
+    
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <NoWarn>Publicizer001;NU5104</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="libs\Assembly-CSharp.dll" />
-    <Content Include="libs\MMHOOK_Assembly-CSharp.dll" />
-    <Content Include="libs\Rewired_Core.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>libs\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Cinemachine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>libs\Cinemachine.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="MMHOOK_Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>libs\MMHOOK_Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Rewired_Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>libs\Rewired_Core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>libs\UnityEngine.UI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="BepInEx.GameLibs.CatsAreLiquid.ABetterPlace" Version="1.2.13-r.1" />
     <PackageReference Include="BepInEx.Analyzers" Version="1.0.8" PrivateAssets="all" />
     <PackageReference Include="BepInEx.Core" Version="5.4.21" />
-    <PackageReference Include="BepInEx.PluginInfoProps" Version="1.1.0" />
-    <PackageReference Include="UnityEngine.Modules" Version="2018.4.36" IncludeAssets="compile" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\meta\icon.png" Pack="true" PackagePath="" Link="icon.png" />
+  </ItemGroup>
+
+  <Import Project="MMHookGen.targets" />
+  <Import Project="PluginInfo.targets" />
 
 </Project>
