@@ -94,9 +94,10 @@ public static class Prophecies {
         int currentProphecyButtonsRow = 0;
         int currentPropheciesIndex = 0;
         On.DataEditor.AddComponentControlButtons += (On.DataEditor.orig_AddComponentControlButtons orig,
-            DataEditor self, RectTransform content, MonoBehaviour component, string[] methodNames, string[] iconNames,
+            DataEditor self, object content, object component, string[] methodNames, string[] iconNames,
             ref float yPosition) => {
-            if(component is not Prophet) return orig(self, content, component, methodNames, iconNames, ref yPosition);
+            if(component is not Prophet)
+                return orig(self, content, component, methodNames, iconNames, ref yPosition);
 
             int minPropheciesPerRow = prophecies.Count / _propheciesButtonsRowsCount;
             int additionalProphecies = prophecies.Count % _propheciesButtonsRowsCount;
