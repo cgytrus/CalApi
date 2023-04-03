@@ -1,0 +1,24 @@
+name: DocFX documentation
+
+on:
+  workflow_dispatch:
+  release:
+    types: [ released ]
+
+jobs:
+  docfx:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build documentation
+        uses: nikeee/docfx-action@v1.0.0
+        with:
+          args: ./docfx/docfx.json
+
+      - name: Publish
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docfx/_site
+          cname: calapi.cgyt.ru
