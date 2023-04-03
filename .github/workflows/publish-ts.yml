@@ -1,0 +1,46 @@
+name: Publish Thunderstore package
+
+on:
+  workflow_dispatch:
+  release:
+    types: [ released ]
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Prepare meta
+        run: |
+          rm -f README.md icon.png
+          mkdir ./release
+          cp ./meta/* ./release
+
+      - id: get-version
+        run: |
+          version=$(echo $GITHUB_REF_NAME | cut -c 2-)
+          echo "::set-output name=version::$version"
+
+      - name: Download release
+        uses: robinraju/release-downloader@v1.5
+        with:
+          tag: ${{ github.ref_name }}
+          fileName: CalApi-${{ steps.get-version.outputs.version }}.zip
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: unzip CalApi-${{ steps.get-version.outputs.version }}.zip -d ./release
+
+      - name: Publish package
+        uses: GreenTF/upload-thunderstore-package@v2.2
+        with:
+          path: ./release
+          community: cats-are-liquid
+          namespace: ConfiG
+          name: Cats are Liquid API
+          description: Some small useful APIs and utilities for modding Cats are Liquid - A Better Place
+          version: ${{ steps.get-version.outputs.version }}
+          categories: Libraries Mods Tools
+          deps: BepInEx-BepInExPack_CaLABP@5.4.2100
+          token: ${{ secrets.THUNDERSTORE_TOKEN }}

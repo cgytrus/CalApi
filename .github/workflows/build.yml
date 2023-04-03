@@ -1,0 +1,46 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    outputs:
+      artifact_name:
+        value: ${{ jobs.build-mod.outputs.artifact_name }}
+  pull_request:
+    branches:
+      - '**'
+  push:
+    branches:
+      - '**'
+      - '!main'
+
+jobs:
+  build-mod:
+    name: Build Mod
+    runs-on: ubuntu-latest
+    outputs:
+      artifact_name: ${{ steps.prepare-artifact.outputs.artifact_name }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build -c Release --no-restore
+
+      - name: Prepare artifact
+        id: prepare-artifact
+        run: |
+          mkdir -p artifact/BepInEx/plugins artifact/BepInEx/patchers
+          cp ./CalApi/bin/Release/netstandard2.1/CalApi.dll ./CalApi/bin/Release/netstandard2.1/CalApi.xml ./artifact/BepInEx/plugins
+          echo "::set-output name=artifact_name::CalApi-$(git rev-parse --short HEAD)"
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          name: ${{ steps.prepare-artifact.outputs.artifact_name }}
+          path: artifact
