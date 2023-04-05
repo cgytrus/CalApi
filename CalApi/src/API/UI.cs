@@ -36,7 +36,7 @@ public static class UI {
         orig(self);
         Initialize();
 
-        Transform titleScreenStuff = self.transform.Find("Title Screen Stuff");
+        Transform titleScreenStuff = self.transform.Find("Title Screen Content");
         Text copyright = titleScreenStuff.Find("Copyright").GetComponent<Text>();
         copyright.verticalOverflow = VerticalWrapMode.Overflow;
         StringBuilder textToAppend = new();
