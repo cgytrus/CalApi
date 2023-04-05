@@ -3,24 +3,25 @@
   <PropertyGroup>
     <TargetFramework>net471</TargetFramework>
     <AssemblyName>CalApi</AssemblyName>
+    <Product>Cats are Liquid API</Product>
     <Title>Cats are Liquid API</Title>
     <Authors>ConfiG</Authors>
     <Description>An API mod for Cats are Liquid - A Better Place</Description>
     <Version>0.2.8</Version>
     <Company>https://github.com/cgytrus/CalApi</Company>
     <Copyright>Copyright © ConfiG 2023</Copyright>
-    
+
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/cgytrus/CalApi</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>mod;modding;api;bepinex</PackageTags>
-    
+
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    
+
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>

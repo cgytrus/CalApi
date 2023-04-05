@@ -94,7 +94,7 @@ public static class Prophecies {
         int currentProphecyButtonsRow = 0;
         int currentPropheciesIndex = 0;
         On.DataEditor.AddComponentControlButtons += (On.DataEditor.orig_AddComponentControlButtons orig,
-            DataEditor self, object content, object component, string[] methodNames, string[] iconNames,
+            DataEditor self, RectTransform content, MonoBehaviour component, string[] methodNames, string[] iconNames,
             ref float yPosition) => {
             if(component is not Prophet)
                 return orig(self, content, component, methodNames, iconNames, ref yPosition);
@@ -280,7 +280,7 @@ public static class Prophecies {
             cursor.Emit(OpCodes.Stloc, skipNext);
         }
 
-        IDetour tellDetour = new ILHook(AccessTools.Method(AccessTools.TypeByName("<Tell>d__42"), "MoveNext"),
+        IDetour tellDetour = new ILHook(AccessTools.Method(AccessTools.TypeByName("<Tell>d__45"), "MoveNext"),
             Manipulator);
         tellDetour.Apply();
     }

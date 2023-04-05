@@ -21,10 +21,13 @@
         <!-- Get GameLibs name and version -->
         <ItemGroup>
             <_GameLibs Include="@(PackageDefinitions)" Condition="$([System.String]::Copy(%(Name)).StartsWith('BepInEx.GameLibs.'))" />
+            <_UnityModules Include="@(PackageDefinitions)" Condition="$([System.String]::Copy(%(Name)).Equals('UnityEngine.Modules'))" />
         </ItemGroup>
         <PropertyGroup>
             <GameLibsName>%(_GameLibs.Name)</GameLibsName>
             <GameLibsVersion>%(_GameLibs.Version)</GameLibsVersion>
+            <UnityModulesName>%(_UnityModules.Name)</UnityModulesName>
+            <UnityModulesVersion>%(_UnityModules.Version)</UnityModulesVersion>
         </PropertyGroup>
 
         <!-- Get MMHOOK version -->
@@ -38,6 +41,7 @@
     <Target Name="RunMonoModHookGen" BeforeTargets="BeforeBuild" DependsOnTargets="GetLibsVersions">
         <PropertyGroup>
             <GameAssemblyPath>$(NuGetPackageRoot)$(GameLibsName.ToLower())\$(GameLibsVersion)\lib\$(TargetFramework)\Assembly-CSharp.dll</GameAssemblyPath>
+            <UnityModulesPath>$(NuGetPackageRoot)$(UnityModulesName.ToLower())\$(UnityModulesVersion)\lib\net45</UnityModulesPath>
         </PropertyGroup>
 
         <ItemGroup>
@@ -46,7 +50,12 @@
             <CopyFiles Include="$(PkgMonoMod)\lib\net452\MonoMod.exe" />
             <CopyFiles Include="$(PkgMono_Cecil)\lib\net40\Mono.Cecil.dll" />
             <CopyFiles Include="$(PkgMonoMod_RuntimeDetour_HookGen)\lib\net452\MonoMod.RuntimeDetour.HookGen.exe" />
+            <CopyDirs Include="$(UnityModulesPath)\*.dll" />
         </ItemGroup>
+
+        <!-- Copy Unity modules -->
+        <Copy SourceFiles="@(CopyDirs)" DestinationFolder="$(GameAssemblyPath)\.."
+              UseHardlinksIfPossible="true" SkipUnchangedFiles="true" />
 
         <MakeDir Directories="$(MMHOOKDirectory)" />
 
